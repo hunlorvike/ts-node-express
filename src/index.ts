@@ -1,15 +1,17 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import loaders from "./loaders";
+import express, { Application } from "express";
 
-dotenv.config();
 
-const app: Express = express();
-const port = process.env.PORT;
+export async function main() {
+  const app: Application = express();
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
+  await loaders(app);
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received.');
+    console.log('Express app closed.');
+    process.exit(0);
+  });
+}
+
+main();
