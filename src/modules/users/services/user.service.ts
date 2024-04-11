@@ -5,13 +5,15 @@ import { User } from "../entities/user.entity";
 import { PagedResponseData, PagerInfo, ResponseData } from "src/shareds/types/response.type";
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import { Messages } from "../../../shareds/messages/messages";
+import { UserRepository } from "../repositories/user.repository";
+import { Container } from 'typeorm-typedi-extensions';
 
 @Service()
 export class UserService {
     private readonly userRepository: Repository<User>;
 
-    constructor() { 
-        this.userRepository = getManager().getRepository(User);
+    constructor() {
+        this.userRepository = Container.get(UserRepository);
     }
 
     async findAll(pageNumber: number, pageSize: number): Promise<PagedResponseData<User[]>> {
@@ -112,7 +114,7 @@ export class UserService {
             };
         }
     }
-    
+
     async update(id: number, updateUser: UpdateUserDto): Promise<ResponseData<UpdateResult>> {
         try {
             const updateResult = await this.userRepository.update(id, updateUser);

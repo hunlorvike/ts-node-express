@@ -1,6 +1,6 @@
 import loaders from "./loaders";
 import express, { Application } from "express";
-
+import { logger } from "./shareds/utils/logger";
 
 export async function main() {
   const app: Application = express();
@@ -8,12 +8,9 @@ export async function main() {
   await loaders(app);
 
   process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received.');
-    console.log('Express app closed.');
-    process.exit(0);
+    logger.info('SIGTERM signal received.');
+    logger.info('Closing database connection.');
   });
 }
 
 main();
-
-

@@ -2,11 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { UserService } from '../services/user.service';
 import { QueryDto } from 'src/shareds/types/query.type';
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 
 @Service()
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    private readonly userService: UserService;
+    constructor() { 
+        this.userService = Container.get(UserService);
+    }
 
     async findAll(req: Request, res: Response, next: NextFunction) {
         try {

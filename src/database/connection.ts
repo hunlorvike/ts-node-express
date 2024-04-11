@@ -1,16 +1,17 @@
-import dataSource from "./data-source";
-import { DataSource } from 'typeorm';
+import { Connection, createConnection, getConnectionManager } from 'typeorm';
+import { dataSourceOptions } from './data-source';
+import { logger } from '../shareds/utils/logger';
 
-/**
- * Khởi tạo và kết nối đến nguồn dữ liệu.
- * Trả về một Promise chứa đối tượng DataSource đã được khởi tạo.
- * Nếu có lỗi xảy ra trong quá trình khởi tạo, nó sẽ throw ra một Error.
- */
-export default async function initializeDataSource(): Promise<DataSource> {
+export default async function initializeDataSource(): Promise<Connection | void> {
     try {
-        return await dataSource.initialize();
-    } catch (error) {
-        console.error('Failed to initialize the data source:', error);
-        throw error;
+        const conn = await createConnection(dataSourceOptions);
+        console.log(`Database connection success. Connection name: '${conn.name}' Database: '${conn.options.database}'`);
+    } catch (error: any) {
+        if (error.name === 'AlreadyHasActiveConnectionError') {
+            const activeConnection = getConnectionManager().get(dataSourceOptions.name);
+            return activeConnection;
+        }
+        logger.error('Failed to connect to the database:', error);
     }
+    return null;
 }

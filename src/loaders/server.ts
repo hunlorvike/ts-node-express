@@ -1,6 +1,7 @@
-import { Application } from "express";
+import { Application, Router } from "express";
 import { createServer, Server as HttpServer } from "http";
 import userRouter from "../modules/users/routes/user.router";
+import initializeDataSource from "../database/connection";
 
 export class ServerConfiguration {
     private static instance: ServerConfiguration;
@@ -16,9 +17,10 @@ export class ServerConfiguration {
     }
 
     init(app: Application): this {
-        app.use('/api', app);
-        
-        app.use('/users', userRouter);
+        const apiRouter = Router();
+        apiRouter.use('/users', userRouter);
+
+        app.use('/api', apiRouter); // TODO: PREFIX
 
         this.server = createServer(app);
 
@@ -27,8 +29,12 @@ export class ServerConfiguration {
 
     listen(port: number): any {
         return this.server.listen(port, () => {
-            console.log(`Server is now running on port ${port}`);
+            console.log(`Server is now running on port localhost:${port}`);
         });
+    }
+
+    async connectDB(): Promise<any> {
+       await initializeDataSource();
     }
 }
 
