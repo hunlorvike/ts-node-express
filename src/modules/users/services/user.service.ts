@@ -1,13 +1,18 @@
 import { Service } from "typedi";
-import { Repository, UpdateResult } from "typeorm";
+import { Repository, UpdateResult, getManager } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { User } from "../entities/user.entity";
 import { PagedResponseData, PagerInfo, ResponseData } from "src/shareds/types/response.type";
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
+import { Messages } from "../../../shareds/messages/messages";
 
 @Service()
 export class UserService {
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) { }
+    private readonly userRepository: Repository<User>;
+
+    constructor() { 
+        this.userRepository = getManager().getRepository(User);
+    }
 
     async findAll(pageNumber: number, pageSize: number): Promise<PagedResponseData<User[]>> {
         try {
@@ -36,9 +41,10 @@ export class UserService {
 
             const responseData: PagedResponseData<User[]> = {
                 Data: users,
+                StatusCode: 200,
                 Succeed: true,
                 ErrorList: [],
-                Message: "Users retrieved successfully",
+                Message: '',
                 PagerInfo: pagerInfo,
             };
 
@@ -46,9 +52,10 @@ export class UserService {
         } catch (error) {
             return {
                 Data: [],
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to retrieve users",
+                Message: '',
                 PagerInfo: null,
             };
         }
@@ -59,24 +66,27 @@ export class UserService {
             if (user) {
                 return {
                     Data: user,
+                    StatusCode: 200,
                     Succeed: true,
                     ErrorList: [],
-                    Message: "User found",
+                    Message: Messages.NOT_FOUND,
                 };
             } else {
                 return {
                     Data: undefined,
+                    StatusCode: 200,
                     Succeed: false,
-                    ErrorList: ["User not found"],
-                    Message: "User not found",
+                    ErrorList: [Messages.NOT_FOUND],
+                    Message: Messages.NOT_FOUND,
                 };
             }
         } catch (error) {
             return {
                 Data: undefined,
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to find user",
+                Message: Messages.UNKNOWN_ERROR,
             };
         }
     }
@@ -87,16 +97,18 @@ export class UserService {
             const savedUser = await this.userRepository.save(newUser);
             return {
                 Data: savedUser,
+                StatusCode: 200,
                 Succeed: true,
                 ErrorList: [],
-                Message: "User created successfully",
+                Message: Messages.CREATED_SUCCESSFULLY,
             };
         } catch (error) {
             return {
                 Data: undefined,
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to create user",
+                Message: Messages.UNKNOWN_ERROR,
             };
         }
     }
@@ -106,16 +118,18 @@ export class UserService {
             const updateResult = await this.userRepository.update(id, updateUser);
             return {
                 Data: updateResult,
+                StatusCode: 200,
                 Succeed: true,
                 ErrorList: [],
-                Message: "User updated successfully",
+                Message: Messages.UPDATED_SUCCESSFULLY,
             };
         } catch (error) {
             return {
                 Data: undefined,
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to update user",
+                Message: Messages.UNKNOWN_ERROR,
             };
         }
     }
@@ -124,16 +138,18 @@ export class UserService {
             await this.userRepository.update(id, { deletedAt: new Date() });
             return {
                 Data: undefined,
+                StatusCode: 200,
                 Succeed: true,
                 ErrorList: [],
-                Message: "User soft deleted successfully",
+                Message: Messages.SOFT_DELETED_SUCCESSFULLY,
             };
         } catch (error) {
             return {
                 Data: undefined,
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to soft delete user",
+                Message: Messages.UNKNOWN_ERROR,
             };
         }
     }
@@ -143,16 +159,18 @@ export class UserService {
             const updateResult = await this.userRepository.update(id, { deletedAt: null });
             return {
                 Data: updateResult,
+                StatusCode: 200,
                 Succeed: true,
                 ErrorList: [],
-                Message: "User recovered successfully",
+                Message: Messages.RECOVERED_SUCCESSFULLY,
             };
         } catch (error) {
             return {
                 Data: undefined,
+                StatusCode: 500,
                 Succeed: false,
                 ErrorList: [error as string],
-                Message: "Failed to recover user",
+                Message: Messages.UNKNOWN_ERROR,
             };
         }
     }

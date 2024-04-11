@@ -15,6 +15,7 @@ export class PagerInfo {
 
 export class ResponseData<T> {
     Data: T;
+    StatusCode: number;
     Succeed: boolean;
     ErrorList: string[];
     Message: string;

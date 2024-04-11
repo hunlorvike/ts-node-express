@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
-import { Role } from "src/shareds/enums/role.enum";
-import { BaseEntity } from "src/shareds/types/base.entity";
+import { Role } from "../../../shareds/enums/role.enum";
+import { BaseEntity } from "../../../shareds/types/base.entity";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -29,8 +29,9 @@ export class User extends BaseEntity {
   name: string;
 
   @Column({
+    type: 'enum',
+    enum: Role,
     default: Role.ENDUSER,
-    length: 30,
   })
   role: Role;
 }

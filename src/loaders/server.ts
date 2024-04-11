@@ -1,5 +1,6 @@
 import { Application } from "express";
 import { createServer, Server as HttpServer } from "http";
+import userRouter from "../modules/users/routes/user.router";
 
 export class ServerConfiguration {
     private static instance: ServerConfiguration;
@@ -15,7 +16,12 @@ export class ServerConfiguration {
     }
 
     init(app: Application): this {
+        app.use('/api', app);
+        
+        app.use('/users', userRouter);
+
         this.server = createServer(app);
+
         return this;
     }
 

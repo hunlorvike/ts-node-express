@@ -3,16 +3,18 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import initializeDataSource from '../database/connection';
 import { Server } from './server';
+import { logger } from '../shareds/utils/logger';
+import { Messages } from '../shareds/messages/messages';
 
 dotenv.config();
 
 export default async (app: Application) => {
     try {
         await initializeDataSource();
-        console.log('DB loaded and connected!');
+        logger.info(Messages.DB_CONNECTED); 
 
         Server.init(app).listen(Number(process.env.PORT) || 3000);
     } catch (error) {
-        console.error('Failed to connect to the database:', error);
+        logger.error(Messages.DB_CONNECTION_FAILED, error); 
     }
 };
