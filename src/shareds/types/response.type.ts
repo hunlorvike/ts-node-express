@@ -24,3 +24,7 @@ export class ResponseData<T> {
 export class PagedResponseData<T> extends ResponseData<T> {
     PagerInfo: PagerInfo;
 }
+
+export interface Payload {
+    [key: string]: any;
+}

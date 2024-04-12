@@ -3,15 +3,14 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { Server } from './server';
 import { logger } from '../shareds/utils/logger';
-import { Messages } from '../shareds/messages/messages';
+import { Messages } from '../shareds/consts/messages';
+import { controllers } from '../shareds/consts/controller';
 
 dotenv.config();
 
-export default async (app: Application) => {
+export default (app: Application) => {
     try {
-        Server.init(app).listen(Number(process.env.PORT) || 3000);
-
-        await Server.connectDB();
+        Server.init(app, controllers).listen(Number(process.env.PORT) || 3000); 
     } catch (error) {
         logger.error(Messages.DB_CONNECTION_FAILED, error);
     }

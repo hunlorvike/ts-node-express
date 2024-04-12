@@ -3,12 +3,31 @@ import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { UserService } from '../services/user.service';
 import { QueryDto } from 'src/shareds/types/query.type';
 import Container, { Service } from 'typedi';
+import { BaseController } from '../../../shareds/types/base.controller';
 
 @Service()
-export class UserController {
+export class UserController extends BaseController {
     private readonly userService: UserService;
-    constructor() { 
+
+    constructor() {
+        super();
+        this.initializeRoutes();
+        this.path = 'users';
         this.userService = Container.get(UserService);
+    }
+
+    public initializeRoutes(): void {
+        this.router.get('/', this.findAll.bind(this));
+
+        this.router.get('/:id', this.findById.bind(this));
+
+        this.router.post('/', this.create.bind(this));
+
+        this.router.put('/:id', this.update.bind(this));
+
+        this.router.delete('/:id', this.softDelete.bind(this));
+
+        this.router.post('/:id/recover', this.recover.bind(this));
     }
 
     async findAll(req: Request, res: Response, next: NextFunction) {

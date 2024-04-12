@@ -4,7 +4,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { User } from "../entities/user.entity";
 import { PagedResponseData, PagerInfo, ResponseData } from "src/shareds/types/response.type";
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
-import { Messages } from "../../../shareds/messages/messages";
+import { Messages } from "../../../shareds/consts/messages";
 import { UserRepository } from "../repositories/user.repository";
 import { Container } from 'typeorm-typedi-extensions';
 
