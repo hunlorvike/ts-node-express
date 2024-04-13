@@ -1,5 +1,4 @@
 import { ESLint } from "eslint";
-import globals from "globals";
 import plugin from "@typescript-eslint/eslint-plugin";
 
 const eslint = new ESLint({
@@ -15,8 +14,10 @@ const eslint = new ESLint({
     },
     rules: {
       ...plugin.configs.recommended.rules,
+      // Disable conflicting rules
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["error"],
+      // Custom rules
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "warn",
@@ -26,9 +27,17 @@ const eslint = new ESLint({
       "no-debugger": "error",
       "prefer-const": "error",
       "eqeqeq": ["error", "always"],
-    },
-    globals: {
-      ...globals.browser,
+      "import/no-extraneous-dependencies": "off",
+      "import/no-unresolved": "off",
+      "prefer-object-spread": "off",
+      "global-require": "off",
+      "import/no-dynamic-require": "off",
+      "no-plusplus": "off",
+      "no-underscore-dangle": "off",
+      "no-param-reassign": "off",
+      "@typescript-eslint/no-shadow": "off",
+      "array-callback-return": "off",
+      "default-case": "off",
     },
     overrides: [
       {

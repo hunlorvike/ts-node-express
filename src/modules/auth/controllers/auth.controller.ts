@@ -50,12 +50,8 @@ export class AuthController {
       try {
          const user = await this.authService.register(userData);
          return new ResponseData(user, 200, true, 'User registered successfully');
-      } catch (error) {
-         if (error instanceof Error) {
-            return new ResponseData(null, 400, false, error.message);
-         } else {
-            return new ResponseData(null, 500, false, 'An unexpected error occurred');
-         }
+      } catch (error: any) {
+         return new ResponseData(null, 500, false, 'An unexpected error occurred');
       }
    }
 
@@ -78,12 +74,8 @@ export class AuthController {
          const token = JwtHelper.generateToken(refreshPayload, options);
 
          return new ResponseData({ token: token }, 200, true, 'Login successful');
-      } catch (error) {
-         if (error instanceof Error) {
-            return new ResponseData(null, 400, false, error.message);
-         } else {
-            return new ResponseData(null, 500, false, 'An unexpected error occurred');
-         }
+      } catch (error: any) {
+         return new ResponseData(null, 500, false, 'An unexpected error occurred');
       }
    }
 }

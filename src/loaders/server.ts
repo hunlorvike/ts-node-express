@@ -1,12 +1,11 @@
-import { Application, Request, Response, NextFunction } from 'express';
+import 'reflect-metadata';
+import { Application } from 'express';
 import { Server as HttpServer } from 'http';
 import initializeDataSource from '../database/connection';
 import { logger } from '../shareds/utils/logger';
 import { errorMiddleware } from '../shareds/middlewares/error.middleware';
-import { createExpressServer } from 'routing-controllers';
-import helmet from 'helmet';
 import * as dotenv from 'dotenv';
-import { routingControllersOptions } from '../shareds/configs/app.config';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -30,27 +29,21 @@ export class ServerConfiguration {
 
       this.initErrorHandling(app);
 
-      this.server = createExpressServer(routingControllersOptions);
-
+      this.listen(app, Number(process.env.PORT) || 3000);
       return this;
    }
 
    initMiddlewares(app: Application) {
-      app.use((req: Request, res: Response, next: NextFunction) => {
-         logger.info(`${req.method} ${req.url}`);
-         next();
-      });
-
       app.use(helmet());
    }
 
-   private initErrorHandling(app: Application) {
+   initErrorHandling(app: Application) {
       app.use(errorMiddleware);
    }
 
-   listen(port: number): any {
-      return this.server.listen(port, () => {
-         logger.info(`Server is now running on http://localhost:${port}`);
+   listen(app: Application, port: number): any {
+      return app.listen(port, () => {
+         logger.info(`Server is now running on http://localhost:${port}/swagger.html`);
       });
    }
 

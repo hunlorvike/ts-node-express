@@ -1,9 +1,15 @@
+import { createExpressServer } from 'routing-controllers';
 import loaders from './loaders';
-import express, { Application } from 'express';
+import { routingControllersOptions } from './shareds/configs/app.config';
 import { logger } from './shareds/utils/logger';
+import { Express } from 'express';
+import * as swaggerUiExpress from 'swagger-ui-express';
+import { spec } from './shareds/configs/swagger.config';
 
 export function main() {
-   const app: Application = express();
+   const app: Express = createExpressServer(routingControllersOptions);
+
+   app.use('/swagger.html', swaggerUiExpress.serve, swaggerUiExpress.setup(spec));
 
    loaders(app);
 

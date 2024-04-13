@@ -57,9 +57,9 @@ export class AuthService {
          await queryRunner.commitTransaction();
 
          return new ResponseData(savedUser, 200, true, 'User created successfully');
-      } catch (error) {
+      } catch (error: any) {
          await queryRunner.rollbackTransaction();
-         throw new HttpException(500, 'Failed to create user');
+         throw new HttpException(500, error.message);
       } finally {
          await queryRunner.release();
       }
