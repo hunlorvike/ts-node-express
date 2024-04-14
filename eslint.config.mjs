@@ -15,7 +15,7 @@ const eslint = new ESLint({
     rules: {
       ...plugin.configs.recommended.rules,
       // Disable conflicting rules
-      "no-unused-vars": "off",
+      "no-unused-vars": "error",
       "@typescript-eslint/no-unused-vars": ["error"],
       // Custom rules
       "unused-imports/no-unused-imports": "error",
@@ -27,17 +27,17 @@ const eslint = new ESLint({
       "no-debugger": "error",
       "prefer-const": "error",
       "eqeqeq": ["error", "always"],
-      "import/no-extraneous-dependencies": "off",
-      "import/no-unresolved": "off",
-      "prefer-object-spread": "off",
-      "global-require": "off",
-      "import/no-dynamic-require": "off",
-      "no-plusplus": "off",
-      "no-underscore-dangle": "off",
-      "no-param-reassign": "off",
-      "@typescript-eslint/no-shadow": "off",
-      "array-callback-return": "off",
-      "default-case": "off",
+      "import/no-extraneous-dependencies": "warn",
+      "import/no-unresolved": "warn",
+      "prefer-object-spread": "warn",
+      "global-require": "warn",
+      "import/no-dynamic-require": "warn",
+      "no-plusplus": "warn",
+      "no-underscore-dangle": "warn",
+      "no-param-reassign": "warn",
+      "@typescript-eslint/no-shadow": "warn",
+      "array-callback-return": "warn",
+      "default-case": "warn",
     },
     overrides: [
       {

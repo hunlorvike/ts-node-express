@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.js\"",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "typeorm": "npm run build && typeorm -d dist/database/data-source.js",
     "migrate:generate": "node ./scripts/migrate.generate.js",
     "migrate:create": "npm run typeorm -- migration:create",

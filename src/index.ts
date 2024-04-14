@@ -7,16 +7,16 @@ import * as swaggerUiExpress from 'swagger-ui-express';
 import { spec } from './shareds/configs/swagger.config';
 
 export function main() {
-   const app: Express = createExpressServer(routingControllersOptions);
+    const app: Express = createExpressServer(routingControllersOptions);
 
-   app.use('/swagger.html', swaggerUiExpress.serve, swaggerUiExpress.setup(spec));
+    app.use('/swagger.html', swaggerUiExpress.serve, swaggerUiExpress.setup(spec));
 
-   loaders(app);
+    loaders(app);
 
-   process.on('SIGTERM', () => {
-      logger.info('SIGTERM signal received.');
-      logger.info('Closing database connection.');
-   });
+    process.on('SIGTERM', () => {
+        logger.info('SIGTERM signal received.');
+        logger.info('Closing database connection.');
+    });
 }
 
 main();

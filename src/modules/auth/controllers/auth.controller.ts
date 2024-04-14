@@ -1,11 +1,11 @@
 import {
-   JsonController,
-   Post,
-   Body,
-   BadRequestError,
-   Get,
-   Authorized,
-   CurrentUser,
+    JsonController,
+    Post,
+    Body,
+    BadRequestError,
+    Get,
+    Authorized,
+    CurrentUser,
 } from 'routing-controllers';
 import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { AuthService } from '../services/auth.service';
@@ -14,68 +14,69 @@ import { JwtHelper } from '../../../shareds/utils/jwt.helper';
 import { Payload, ResponseData } from '../../../shareds/types/response.type';
 import { SignOptions } from 'jsonwebtoken';
 import { User } from '../../users/entities/user.entity';
+import { HttpException } from '../../../shareds/middlewares/error.middleware';
 
 @JsonController('/auth')
 export class AuthController {
-   private readonly authService: AuthService;
+    private readonly authService: AuthService;
 
-   constructor() {
-      this.authService = Container.get(AuthService);
-   }
+    constructor() {
+        this.authService = Container.get(AuthService);
+    }
 
-   @Get('/')
-   async hello(): Promise<string> {
-      return 'hello';
-   }
+    @Get('/')
+    async hello(): Promise<string> {
+        return 'hello';
+    }
 
-   @Get('/current-user')
-   async getUser(@CurrentUser() user?: User): Promise<User | string> {
-      return user || 'not found';
-   }
+    @Get('/current-user')
+    async getUser(@CurrentUser() user?: User): Promise<User | string> {
+        return user || 'not found';
+    }
 
-   @Get('/authenticated')
-   @Authorized()
-   async authenticatedRoute(req: Request, res: Response) {
-      return 'Authenticated Route';
-   }
+    @Get('/authenticated')
+    @Authorized()
+    async authenticatedRoute(req: Request, res: Response) {
+        return 'Authenticated Route';
+    }
 
-   @Get('/authorized')
-   @Authorized('ADMIN')
-   async authorizedRoute(req: Request, res: Response) {
-      return 'Authorized Route';
-   }
+    @Get('/authorized')
+    @Authorized('ADMIN')
+    async authorizedRoute(req: Request, res: Response) {
+        return 'Authorized Route';
+    }
 
-   @Post('/register')
-   async register(@Body() userData: RegisterDto): Promise<ResponseData<any>> {
-      try {
-         const user = await this.authService.register(userData);
-         return new ResponseData(user, 200, true, 'User registered successfully');
-      } catch (error: any) {
-         return new ResponseData(null, 500, false, error);
-      }
-   }
+    @Post('/register')
+    async register(@Body() userData: RegisterDto): Promise<ResponseData<any>> {
+        try {
+            const user = await this.authService.register(userData);
+            return new ResponseData(user, 200, true, 'User registered successfully');
+        } catch (error: any) {
+            throw new HttpException(500, error);
+        }
+    }
 
-   @Post('/login')
-   async login(@Body() credentials: LoginDto): Promise<ResponseData<any>> {
-      try {
-         const user = await this.authService.login(credentials);
+    @Post('/login')
+    async login(@Body() credentials: LoginDto): Promise<ResponseData<any>> {
+        try {
+            const user = await this.authService.login(credentials);
 
-         if (!user) {
-            throw new BadRequestError('Invalid email or password');
-         }
-         const refreshPayload: Payload = {
-            user: user,
-         };
+            if (!user) {
+                throw new BadRequestError('Invalid email or password');
+            }
+            const refreshPayload: Payload = {
+                user: user,
+            };
 
-         const options: SignOptions = {
-            expiresIn: '1d',
-         };
+            const options: SignOptions = {
+                expiresIn: '1d',
+            };
 
-         const token = JwtHelper.generateToken(refreshPayload, options);
+            const token = JwtHelper.generateToken(refreshPayload, options);
 
-         return new ResponseData({ token: token }, 200, true, 'Login successful');
-      } catch (error: any) {
-         return new ResponseData(null, 500, false, error);
-      }
-   }
+            return new ResponseData({ token: token }, 200, true, 'Login successful');
+        } catch (error: any) {
+            throw new HttpException(500, error);
+        }
+    }
 }

@@ -9,55 +9,55 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export class ServerConfiguration {
-   private static instance: ServerConfiguration;
-   private server: HttpServer;
+    private static instance: ServerConfiguration;
+    private server: HttpServer;
 
-   private constructor() { }
+    private constructor() {}
 
-   static getInstance(): ServerConfiguration {
-      if (!ServerConfiguration.instance) {
-         ServerConfiguration.instance = new ServerConfiguration();
-      }
-      return ServerConfiguration.instance;
-   }
+    static getInstance(): ServerConfiguration {
+        if (!ServerConfiguration.instance) {
+            ServerConfiguration.instance = new ServerConfiguration();
+        }
+        return ServerConfiguration.instance;
+    }
 
-   init(app: Application): this {
-      this.connectDB();
+    init(app: Application): this {
+        this.connectDB();
 
-      this.initMiddlewares(app);
+        this.initMiddlewares(app);
 
-      this.initErrorHandling(app);
+        this.initErrorHandling(app);
 
-      this.listen(app, Number(process.env.PORT) || 3000);
-      return this;
-   }
+        this.listen(app, Number(process.env.PORT) || 3000);
+        return this;
+    }
 
-   initMiddlewares(app: Application) {
-      app.use((req: Request, res: Response, next: NextFunction) => {
-         logger.info(`${req.method} ${req.url}`);
-         next();
-      });
+    initMiddlewares(app: Application) {
+        app.use((req: Request, res: Response, next: NextFunction) => {
+            logger.info(`${req.method} ${req.url}`);
+            next();
+        });
 
-      app.use(express.json());
+        app.use(express.json());
 
-      app.use(express.urlencoded({ extended: true }));
+        app.use(express.urlencoded({ extended: true }));
 
-      app.use(express.static('public'));
-   }
+        app.use(express.static('public'));
+    }
 
-   initErrorHandling(app: Application) {
-      app.use(errorMiddleware);
-   }
+    initErrorHandling(app: Application) {
+        app.use(errorMiddleware);
+    }
 
-   listen(app: Application, port: number): any {
-      return app.listen(port, () => {
-         logger.info(`Server is now running on http://localhost:${port}/swagger.html`);
-      });
-   }
+    listen(app: Application, port: number): any {
+        return app.listen(port, () => {
+            logger.info(`Server is now running on http://localhost:${port}/swagger.html`);
+        });
+    }
 
-   async connectDB(): Promise<any> {
-      await initializeDataSource();
-   }
+    async connectDB(): Promise<any> {
+        await initializeDataSource();
+    }
 }
 
 const Server = ServerConfiguration.getInstance();
