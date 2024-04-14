@@ -51,7 +51,7 @@ export class AuthController {
          const user = await this.authService.register(userData);
          return new ResponseData(user, 200, true, 'User registered successfully');
       } catch (error: any) {
-         return new ResponseData(null, 500, false, 'An unexpected error occurred');
+         return new ResponseData(null, 500, false, error);
       }
    }
 
@@ -75,7 +75,7 @@ export class AuthController {
 
          return new ResponseData({ token: token }, 200, true, 'Login successful');
       } catch (error: any) {
-         return new ResponseData(null, 500, false, 'An unexpected error occurred');
+         return new ResponseData(null, 500, false, error);
       }
    }
 }

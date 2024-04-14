@@ -1,11 +1,10 @@
 import 'reflect-metadata';
-import { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import { Server as HttpServer } from 'http';
 import initializeDataSource from '../database/connection';
 import { logger } from '../shareds/utils/logger';
 import { errorMiddleware } from '../shareds/middlewares/error.middleware';
 import * as dotenv from 'dotenv';
-import helmet from 'helmet';
 
 dotenv.config();
 
@@ -13,7 +12,7 @@ export class ServerConfiguration {
    private static instance: ServerConfiguration;
    private server: HttpServer;
 
-   private constructor() {}
+   private constructor() { }
 
    static getInstance(): ServerConfiguration {
       if (!ServerConfiguration.instance) {
@@ -34,7 +33,16 @@ export class ServerConfiguration {
    }
 
    initMiddlewares(app: Application) {
-      app.use(helmet());
+      app.use((req: Request, res: Response, next: NextFunction) => {
+         logger.info(`${req.method} ${req.url}`);
+         next();
+      });
+
+      app.use(express.json());
+
+      app.use(express.urlencoded({ extended: true }));
+
+      app.use(express.static('public'));
    }
 
    initErrorHandling(app: Application) {
