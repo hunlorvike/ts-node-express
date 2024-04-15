@@ -3,7 +3,6 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import { Server as HttpServer } from 'http';
 import initializeDataSource from '../database/connection';
 import { logger } from '../shareds/utils/logger';
-import { errorMiddleware } from '../shareds/middlewares/error.middleware';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -26,7 +25,6 @@ export class ServerConfiguration {
 
         this.initMiddlewares(app);
 
-        this.initErrorHandling(app);
 
         this.listen(app, Number(process.env.PORT) || 3000);
         return this;
@@ -43,10 +41,6 @@ export class ServerConfiguration {
         app.use(express.urlencoded({ extended: true }));
 
         app.use(express.static('public'));
-    }
-
-    initErrorHandling(app: Application) {
-        app.use(errorMiddleware);
     }
 
     listen(app: Application, port: number): any {

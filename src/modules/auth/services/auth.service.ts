@@ -6,21 +6,18 @@ import { Payload, ResponseData } from '../../../shareds/types/response.type';
 import { SignOptions } from 'jsonwebtoken';
 import { JwtHelper } from '../../../shareds/utils/jwt.helper';
 import { User } from '../../users/entities/user.entity';
+import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Service } from 'typedi';
 
 @Service()
 export class AuthService {
-    private readonly userRepository: Repository<User>;
-
-    constructor() {
-        this.userRepository = getRepository(User);
-    }
+    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
 
     async register(userData: RegisterDto): Promise<ResponseData<User>> {
-        console.log(userData);
         const existingUser = await this.userRepository.findOne({
             where: { email: userData.email },
         });
+        console.log(userData);
 
         if (existingUser) {
             throw new HttpException(400, 'Email already exists');

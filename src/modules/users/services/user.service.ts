@@ -9,14 +9,11 @@ import {
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { Messages } from '../../../shareds/consts/messages';
 import { HttpException } from '../../../shareds/middlewares/error.middleware';
+import { InjectRepository } from 'typeorm-typedi-extensions';
 
 @Service()
 export class UserService {
-    private readonly userRepository: Repository<User>;
-
-    constructor() {
-        this.userRepository = getRepository(User);
-    }
+    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) { }
 
     async findAll(
         pageNumber: number,
