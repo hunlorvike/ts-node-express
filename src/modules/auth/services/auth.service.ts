@@ -1,4 +1,4 @@
-import { Repository, getManager, getRepository } from 'typeorm';
+import { getManager } from 'typeorm';
 import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { HttpException } from '../../../shareds/middlewares/error.middleware';
 import bcrypt from 'bcryptjs';
@@ -6,18 +6,29 @@ import { Payload, ResponseData } from '../../../shareds/types/response.type';
 import { SignOptions } from 'jsonwebtoken';
 import { JwtHelper } from '../../../shareds/utils/jwt.helper';
 import { User } from '../../users/entities/user.entity';
-import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Service } from 'typedi';
+import dataSource from '../../../database/data-source';
 
-@Service()
 export class AuthService {
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
+    private static instance: AuthService;
+    private static userRepository = dataSource.getRepository(User);
+
+    private constructor() { }
+
+    static get(): AuthService {
+        if (!AuthService.instance) {
+            AuthService.instance = new AuthService();
+        }
+        return AuthService.instance;
+    }
+
+    test(): string {
+        return 'hello';
+    }
 
     async register(userData: RegisterDto): Promise<ResponseData<User>> {
-        const existingUser = await this.userRepository.findOne({
+        const existingUser = await AuthService.userRepository.findOne({
             where: { email: userData.email },
         });
-        console.log(userData);
 
         if (existingUser) {
             throw new HttpException(400, 'Email already exists');
@@ -25,14 +36,13 @@ export class AuthService {
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-        const newUser = new User();
-        newUser.email = userData.email;
-        newUser.password = hashedPassword;
-        newUser.username = userData.username;
-        newUser.name = userData.name;
-        newUser.isVerified = true;
-
-        console.log(newUser);
+        const newUser = AuthService.userRepository.create({
+            email: userData.email,
+            password: hashedPassword,
+            username: userData.username,
+            name: userData.name,
+            isVerified: true,
+        });
 
         const refreshPayload: Payload = {
             email: newUser.email,
@@ -51,7 +61,7 @@ export class AuthService {
         await queryRunner.startTransaction();
 
         try {
-            const savedUser = await this.userRepository.save(newUser);
+            const savedUser = await AuthService.userRepository.save(newUser);
 
             await queryRunner.commitTransaction();
 
@@ -65,7 +75,7 @@ export class AuthService {
     }
 
     async login(credentials: LoginDto): Promise<User | null> {
-        const user = await this.userRepository.findOne({
+        const user = await AuthService.userRepository.findOne({
             where: { email: credentials.email },
         });
 

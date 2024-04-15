@@ -25,7 +25,6 @@ export class ServerConfiguration {
 
         this.initMiddlewares(app);
 
-
         this.listen(app, Number(process.env.PORT) || 3000);
         return this;
     }

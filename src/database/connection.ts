@@ -3,7 +3,7 @@ import { dataSourceOptions } from './data-source';
 import { logger } from '../shareds/utils/logger';
 
 export default async function initializeDataSource(): Promise<Connection | void> {
-    try {        
+    try {
         const conn = await createConnection(dataSourceOptions);
         logger.info(
             `Database status connection: ${conn.isConnected}. Connection: '${conn.name}' Database: '${conn.options.database}'`,

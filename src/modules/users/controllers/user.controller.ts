@@ -17,7 +17,7 @@ import { HttpException } from '../../../shareds/middlewares/error.middleware';
 
 @JsonController('/users')
 export class UserController {
-    constructor(private readonly userService: UserService) {}
+    private userService = UserService.get();
 
     @Get('/:id')
     async getById(@Param('id') id: number): Promise<ResponseData<User | undefined>> {

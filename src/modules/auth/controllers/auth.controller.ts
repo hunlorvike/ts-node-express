@@ -9,7 +9,7 @@ import {
 } from 'routing-controllers';
 import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { AuthService } from '../services/auth.service';
-import Container from 'typedi';
+import Container, { Inject } from 'typedi';
 import { JwtHelper } from '../../../shareds/utils/jwt.helper';
 import { Payload, ResponseData } from '../../../shareds/types/response.type';
 import { SignOptions } from 'jsonwebtoken';
@@ -18,15 +18,11 @@ import { HttpException } from '../../../shareds/middlewares/error.middleware';
 
 @JsonController('/auth')
 export class AuthController {
-    private readonly authService: AuthService;
-
-    constructor() {
-        this.authService = Container.get(AuthService);
-    }
+    private authService = AuthService.get();
 
     @Get('/')
     async hello(): Promise<string> {
-        return 'hello';
+        return this.authService.test();
     }
 
     @Get('/current-user')
