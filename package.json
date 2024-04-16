@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "swc src -d dist",
+    "start": "npm run build && node dist/src/index.js",
     "dev": "nodemon src/index.ts",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.js\"",
-    "lint": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.js\" \"../ts-node-express/**/*.js\" \"../ts-node-express/**/*.json\"",
+    "lint": "eslint --ignore-path .gitignore --ext .ts src",
+    "lint:fix": "npm run lint -- --fix",
     "typeorm": "npm run build && typeorm -d dist/database/data-source.js",
     "migrate:generate": "node ./scripts/migrate.generate.js",
     "migrate:create": "npm run typeorm -- migration:create",
@@ -15,11 +16,10 @@
     "migrate:revert": "npm run typeorm -- migration:revert"
   },
   "keywords": [],
-  "author": "",
-  "license": "UNLICENSED",
-  "description": "",
+  "author": "Hung Love Java",
+  "license": "ISC",
+  "description": "TypeScript + Express API Server",
   "dependencies": {
-    "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
@@ -44,39 +44,37 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.4.14",
+    "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.7",
     "@types/swagger-ui-express": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^6.1.1",
     "globals": "^15.0.0",
+    "husky": "^9.0.11",
     "install": "^0.13.0",
+    "node-config": "^0.0.2",
     "nodemon": "^3.1.0",
     "npm": "^10.5.1",
+    "pm2": "^5.3.1",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.8",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.6.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "./src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }
