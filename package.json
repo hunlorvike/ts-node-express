@@ -1,6 +1,6 @@
 {
   "name": "ts-node-express",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.ts",
   "scripts": {
     "build": "swc src -d dist",
@@ -9,6 +9,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.js\" \"../ts-node-express/**/*.js\" \"../ts-node-express/**/*.json\"",
     "lint": "eslint --ignore-path .gitignore --ext .ts src",
     "lint:fix": "npm run lint -- --fix",
+    "lint:check": "npm run lint -- --color",
     "typeorm": "npm run build && typeorm -d dist/database/data-source.js",
     "migrate:generate": "node ./scripts/migrate.generate.js",
     "migrate:create": "npm run typeorm -- migration:create",
@@ -23,8 +24,8 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
-    "class-validator-jsonschema": "^3.1.1",
+    "class-validator": "^0.14.1",
+    "class-validator-jsonschema": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -42,6 +43,8 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.2.2",
+    "@commitlint/config-conventional": "^19.2.2",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@swc/cli": "^0.3.12",
