@@ -1,15 +1,8 @@
-import 'reflect-metadata';
-import express, {
-  type Application,
-  type Request,
-  type Response,
-  type NextFunction,
-} from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import initializeDataSource from './database/connection';
 import { logger } from './shareds/utils/logger';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { PORT } from './shareds/configs/const.config';
+import fs from 'fs';
 
 export class ServerConfiguration {
   private static instance: ServerConfiguration;
@@ -22,17 +15,13 @@ export class ServerConfiguration {
   }
 
   init(app: Application): this {
-    this.ioc();
-
     this.connectDB();
 
     this.initMiddlewares(app);
 
-    this.listen(app, Number(process.env.PORT) || 3000);
+    this.listen(app, Number(PORT));
     return this;
   }
-
-  ioc() {}
 
   initMiddlewares(app: Application) {
     app.use((req: Request, res: Response, next: NextFunction) => {
@@ -49,9 +38,12 @@ export class ServerConfiguration {
 
   listen(app: Application, port: number): any {
     return app.listen(port, () => {
-      logger.info('=================================');
+      if (fs.existsSync('./banner.txt')) {
+        console.log(fs.readFileSync('./banner.txt', 'utf8'));
+      }
+      logger.info('==================================================================');
       logger.info(`Server is now running on http://localhost:${port}/swagger.html`);
-      logger.info('=================================');
+      logger.info('==================================================================');
     });
   }
 

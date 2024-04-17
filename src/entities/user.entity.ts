@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from '../shareds/enums/role.enum';
-import { EntityBase } from '@/shareds/interfaces/base.entity';
+import { Role } from '../shareds/types/enums/type.enum';
+import { EntityBase } from '../shareds/types/base.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity implements EntityBase {

@@ -2,7 +2,7 @@ import { Middleware, type ExpressMiddlewareInterface } from 'routing-controllers
 import { type Request, type Response, type NextFunction } from 'express';
 import { type JwtPayload } from 'jsonwebtoken';
 import { HttpException } from '../configs/http.exception';
-import { JwtHelper } from '../utils/jwt.helper';
+import { JwtHelper } from '../helpers/jwt.helper';
 
 @Middleware({ type: 'before' })
 export class AuthenticatedMiddleware implements ExpressMiddlewareInterface {

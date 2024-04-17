@@ -4,7 +4,7 @@ import {
   PagedResponseData,
   type PagerInfo,
   ResponseData,
-} from '../shareds/interfaces/response.type';
+} from '../shareds/types/response.type';
 import { type CreateUserDto, type UpdateUserDto } from '../dtos/user.dto';
 import { HttpException } from '../shareds/configs/http.exception';
 import { Service } from 'typedi';

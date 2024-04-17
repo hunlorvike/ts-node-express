@@ -14,7 +14,8 @@
     "migrate:generate": "node ./scripts/migrate.generate.js",
     "migrate:create": "npm run typeorm -- migration:create",
     "migrate:run": "npm run typeorm -- migration:run",
-    "migrate:revert": "npm run typeorm -- migration:revert"
+    "migrate:revert": "npm run typeorm -- migration:revert",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "Hung Love Java",
@@ -40,7 +41,8 @@
     "typedi": "^0.10.0",
     "typeorm": "^0.3.20",
     "typeorm-typedi-extensions": "^0.4.1",
-    "winston": "^3.13.0"
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.2.2",
@@ -69,6 +71,7 @@
     "globals": "^15.0.0",
     "husky": "^9.0.11",
     "install": "^0.13.0",
+    "lint-staged": "^15.2.2",
     "node-config": "^0.0.2",
     "nodemon": "^3.1.0",
     "npm": "^10.5.1",
@@ -79,5 +82,16 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.6.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,json,css,scss,md}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

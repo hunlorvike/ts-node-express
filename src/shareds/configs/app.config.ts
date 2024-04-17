@@ -1,10 +1,11 @@
 import { type JwtPayload } from 'jsonwebtoken';
 import { type Action, type RoutingControllersOptions } from 'routing-controllers';
 import { type AuthorizationChecker } from 'routing-controllers/types/AuthorizationChecker';
-import { JwtHelper } from '../utils/jwt.helper';
+import { JwtHelper } from '../helpers/jwt.helper';
 import { AuthController } from '../../controllers/auth.controller';
 import { UserController } from '../../controllers/user.controller';
 import { type CurrentUserChecker } from 'routing-controllers/types/CurrentUserChecker';
+import { PREFIX } from './const.config';
 
 export const controllers = [AuthController, UserController];
 
@@ -50,7 +51,7 @@ export const currentUserChecker: CurrentUserChecker = async (action: Action) => 
 export const routingControllersOptions: RoutingControllersOptions = {
   cors: true,
   classTransformer: true,
-  routePrefix: process.env.PREFIX,
+  routePrefix: PREFIX,
   validation: true,
   controllers,
   authorizationChecker,

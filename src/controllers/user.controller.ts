@@ -11,7 +11,7 @@ import {
 import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { type User } from '../entities/user.entity';
-import { type ResponseData } from '../shareds/interfaces/response.type';
+import { type ResponseData } from '../shareds/types/response.type';
 import { type UpdateResult } from 'typeorm';
 import { HttpException } from '../shareds/configs/http.exception';
 import Container from 'typedi';

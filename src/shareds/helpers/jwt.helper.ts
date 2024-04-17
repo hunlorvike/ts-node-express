@@ -1,12 +1,11 @@
 import jwt, { type SignOptions, type VerifyOptions } from 'jsonwebtoken';
-import * as dotenv from 'dotenv';
 import { HttpException } from '../configs/http.exception';
-import { type Payload } from '../interfaces/response.type';
-dotenv.config();
+import { type Payload } from '../types/response.type';
+import { REFRESH_SECRETKEY, SECRETKEY } from 'shareds/configs/const.config';
 
 export class JwtHelper {
   public static generateToken(payload: Payload, options?: SignOptions): string {
-    if (!process.env.SECRETKEY) {
+    if (!SECRETKEY) {
       throw new HttpException(
         500,
         'SECRETKEY is not defined in the environment variables.',
@@ -14,22 +13,22 @@ export class JwtHelper {
     }
     options = { algorithm: 'HS256', ...options };
 
-    const token = jwt.sign(payload, process.env.SECRETKEY, options);
+    const token = jwt.sign(payload, SECRETKEY, options);
     return `Bearer ${token}`;
   }
 
   public static generateRefreshToken(payload: Payload, options?: SignOptions): string {
-    if (!process.env.REFRESH_SECRETKEY) {
+    if (!REFRESH_SECRETKEY) {
       throw new HttpException(
         500,
         'REFRESH_SECRETKEY is not defined in the environment variables.',
       );
     }
-    return jwt.sign(payload, process.env.REFRESH_SECRETKEY, options);
+    return jwt.sign(payload, REFRESH_SECRETKEY, options);
   }
 
   public static verifyToken(token: string, options?: VerifyOptions): Payload | null {
-    if (!process.env.SECRETKEY) {
+    if (!SECRETKEY) {
       throw new HttpException(
         500,
         'SECRETKEY is not defined in the environment variables.',
@@ -38,11 +37,7 @@ export class JwtHelper {
     options = { algorithms: ['HS256'], ...options };
     try {
       const tokenWithoutBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
-      const decoded = jwt.verify(
-        tokenWithoutBearer,
-        process.env.SECRETKEY,
-        options,
-      ) as Payload;
+      const decoded = jwt.verify(tokenWithoutBearer, SECRETKEY, options) as Payload;
       return decoded;
     } catch (error) {
       throw new HttpException(
@@ -56,18 +51,14 @@ export class JwtHelper {
     token: string,
     options?: VerifyOptions,
   ): Payload | null {
-    if (!process.env.REFRESH_SECRETKEY) {
+    if (!REFRESH_SECRETKEY) {
       throw new HttpException(
         500,
         'REFRESH_SECRETKEY is not defined in the environment variables.',
       );
     }
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.REFRESH_SECRETKEY,
-        options,
-      ) as Payload;
+      const decoded = jwt.verify(token, REFRESH_SECRETKEY, options) as Payload;
       return decoded;
     } catch (error) {
       throw new HttpException(

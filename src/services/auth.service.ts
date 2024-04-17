@@ -1,9 +1,9 @@
 import { type RegisterDto, type LoginDto } from '../dtos/auth.dto';
 import { HttpException } from '../shareds/configs/http.exception';
 import bcrypt from 'bcryptjs';
-import { type Payload, ResponseData } from '../shareds/interfaces/response.type';
+import { type Payload, ResponseData } from '../shareds/types/response.type';
 import { type SignOptions } from 'jsonwebtoken';
-import { JwtHelper } from '../shareds/utils/jwt.helper';
+import { JwtHelper } from '../shareds/helpers/jwt.helper';
 import { User } from '../entities/user.entity';
 import { Service } from 'typedi';
 import { getRepository, Repository } from 'typeorm';

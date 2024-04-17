@@ -34,7 +34,7 @@
       "@controllers/*": ["src/controllers/*"],
       "@dtos/*": ["src/dtos/*"],
       "@exceptions/*": ["src/exceptions/*"],
-      "@interfaces/*": ["src/shareds/interfaces/*"],
+      "@interfaces/*": ["src/shareds/types/*"],
       "@middlewares/*": ["src/shareds/middlewares/*"],
       "@repositories/*": ["src/repositories/*"],
       "@services/*": ["src/services/*"],
@@ -119,7 +119,7 @@
   },
   "include": [
     "src/**/*.ts", // Các tệp TypeScript trong thư mục src
-    "src/shareds/types/*" // Tất cả các tệp .d.ts trong thư mục src/shareds/types/
+    "src/shareds/declares/*" // Tất cả các tệp .d.ts trong thư mục src/shareds/declares/
   ],
   "exclude": ["node_modules", "dist"]
 }

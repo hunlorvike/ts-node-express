@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength, MaxLength, IsEnum } from 'class-validator';
-import { Role } from '../shareds/enums/role.enum';
+import { Role } from '../shareds/types/enums/type.enum';
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Email must be a valid email address' })

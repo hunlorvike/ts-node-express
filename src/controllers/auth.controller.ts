@@ -9,8 +9,8 @@ import {
 } from 'routing-controllers';
 import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { AuthService } from '../services/auth.service';
-import { JwtHelper } from '../shareds/utils/jwt.helper';
-import { type Payload, ResponseData } from '../shareds/interfaces/response.type';
+import { JwtHelper } from '../shareds/helpers/jwt.helper';
+import { type Payload, ResponseData } from '../shareds/types/response.type';
 import { type SignOptions } from 'jsonwebtoken';
 import { User } from '../entities/user.entity';
 import { HttpException } from '../shareds/configs/http.exception';

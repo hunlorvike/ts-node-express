@@ -1,16 +1,20 @@
-import * as dotenv from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { join } from 'path';
-
-dotenv.config();
+import {
+  DB_HOST,
+  POSTGRES_DB,
+  POSTGRES_PASSWORD,
+  POSTGRES_PORT,
+  POSTGRES_USER,
+} from 'shareds/configs/const.config';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.POSTGRES_PORT) || 5454,
-  username: process.env.POSTGRES_USER,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
+  host: DB_HOST,
+  port: Number(POSTGRES_PORT),
+  username: POSTGRES_USER,
+  database: POSTGRES_DB,
+  password: POSTGRES_PASSWORD,
   entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
   extra: {
