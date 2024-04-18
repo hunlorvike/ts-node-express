@@ -6,35 +6,48 @@ import { AuthController } from '../../controllers/auth.controller';
 import { UserController } from '../../controllers/user.controller';
 import { type CurrentUserChecker } from 'routing-controllers/types/CurrentUserChecker';
 import { PREFIX } from './const.config';
+import { getRepository } from 'typeorm';
+import { User } from 'entities/user.entity';
+import { Role } from 'shareds/types/enums/type.enum';
+import { HttpException } from './http.exception';
+import { getTokenFromHeader } from 'shareds/middlewares/get_token.middleware';
 
 export const controllers = [AuthController, UserController];
 
 export const authorizationChecker: AuthorizationChecker = async (
   action: Action,
-  roles: string[],
+  roles: Role[],
 ) => {
-  const authHeader = action.request.headers.authorization;
-  const token = authHeader?.split(' ')[1];
+  const token = getTokenFromHeader(action.request.headers.authorization);
 
   if (!token) {
-    return false;
+    throw new HttpException(401, 'Authorization token is missing');
   }
+
   const payload = JwtHelper.verifyToken(token) as JwtPayload;
-  if (payload?.user) {
-    const user = payload.user;
-    if (user.role && roles.length === 0) {
-      return true;
-    }
-    if (user.role && roles.find((role) => user.role.indexOf(role) !== -1)) {
-      return true;
-    }
+
+  if (!payload?.userId) {
+    throw new HttpException(401, 'Invalid token payload');
   }
-  return false;
+
+  const userRepository = getRepository(User);
+  const user = await userRepository.findOne({
+    where: { id: payload.userId },
+  });
+
+  if (!user) {
+    throw new HttpException(404, 'User not found');
+  }
+
+  if (roles.length === 0 || roles.includes(user.role)) {
+    return true;
+  }
+
+  throw new HttpException(403, 'Forbidden');
 };
 
 export const currentUserChecker: CurrentUserChecker = async (action: Action) => {
-  const authHeader = action.request.headers.authorization;
-  const token = authHeader?.split(' ')[1];
+  const token = getTokenFromHeader(action.request.headers.authorization);
 
   if (!token) {
     return null;
@@ -42,7 +55,21 @@ export const currentUserChecker: CurrentUserChecker = async (action: Action) => 
 
   try {
     const payload = JwtHelper.verifyToken(token) as JwtPayload;
-    return payload?.user || null;
+
+    if (!payload?.userId) {
+      throw new HttpException(401, 'Invalid token payload');
+    }
+
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: payload.userId },
+    });
+
+    if (!user) {
+      throw new HttpException(404, 'User not found');
+    }
+
+    return user;
   } catch (error) {
     return null;
   }

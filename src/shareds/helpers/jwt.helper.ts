@@ -13,8 +13,7 @@ export class JwtHelper {
     }
     options = { algorithm: 'HS256', ...options };
 
-    const token = jwt.sign(payload, SECRETKEY, options);
-    return `Bearer ${token}`;
+    return jwt.sign(payload, SECRETKEY, options);
   }
 
   public static generateRefreshToken(payload: Payload, options?: SignOptions): string {

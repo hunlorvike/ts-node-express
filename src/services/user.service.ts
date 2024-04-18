@@ -58,7 +58,7 @@ export class UserService {
 
   async findById(id: number): Promise<ResponseData<User | undefined>> {
     try {
-      const user = await User.findOne({
+      const user = await this.userRepository.findOne({
         where: { id, deletedAt: IsNull() },
       });
 
@@ -81,11 +81,9 @@ export class UserService {
 
   async create(userData: CreateUserDto): Promise<ResponseData<User>> {
     try {
-      const userPartial = plainToClass(User, userData, {
-        excludeExtraneousValues: true,
-      });
+      const userPartial = plainToClass(User, userData);
 
-      const newUser = User.create(userPartial);
+      const newUser = this.userRepository.create(userPartial);
 
       const savedUser = await this.userRepository.save(newUser);
 
@@ -103,7 +101,8 @@ export class UserService {
     updateUser: UpdateUserDto,
   ): Promise<ResponseData<UpdateResult>> {
     try {
-      const updateResult = await User.update(id, updateUser);
+      const user = plainToClass(User, updateUser);
+      const updateResult = await this.userRepository.update(id, user);
       return new ResponseData<UpdateResult>(
         updateResult,
         200,
@@ -118,10 +117,17 @@ export class UserService {
     }
   }
 
-  async softDelete(id: number): Promise<ResponseData<void>> {
+  async softDelete(id: number): Promise<ResponseData<UpdateResult>> {
     try {
-      await User.update(id, { deletedAt: new Date() });
-      return new ResponseData<void>(undefined, 200, true, 'Soft deleted successfully');
+      const updateResult = await this.userRepository.update(id, {
+        deletedAt: new Date(),
+      });
+      return new ResponseData<UpdateResult>(
+        updateResult,
+        200,
+        true,
+        'Soft deleted successfully',
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(500, error.message);

@@ -5,15 +5,19 @@ import {
   DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../shareds/types/enums/type.enum';
 import { EntityBase } from '../shareds/types/base.entity';
+import { UpdateDateColumn } from 'typeorm/decorator/columns/UpdateDateColumn';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity implements EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ type: 'uuid', default: () => `'${uuidv4()}'` })
+  uuid: string;
 
   @Column({
     unique: true,
@@ -25,8 +29,14 @@ export class User extends BaseEntity implements EntityBase {
   })
   email: string;
 
+  @Column({
+    nullable: true,
+    unique: true,
+  })
+  phone: string;
+
   @Column()
-  password: string;
+  passwordHash: string;
 
   @Column({
     nullable: true,
@@ -37,7 +47,7 @@ export class User extends BaseEntity implements EntityBase {
   @Column({
     nullable: true,
   })
-  name: string;
+  fullName: string;
 
   @Column({
     type: 'enum',
@@ -50,23 +60,23 @@ export class User extends BaseEntity implements EntityBase {
     nullable: true,
     type: 'text',
   })
-  refresh_token: string;
+  refreshToken: string;
 
   @Column({
     default: false,
   })
-  isVerified: boolean;
+  isEmailVerified: boolean;
 
   @Column({
     nullable: true,
     type: 'text',
   })
-  verificationEmailToken: string;
+  emailVerificationToken: string;
 
   @Column({
     default: false,
   })
-  isTwoFactorEnabled: boolean;
+  isTwoFactorAuthEnabled: boolean;
 
   @Column({
     nullable: true,

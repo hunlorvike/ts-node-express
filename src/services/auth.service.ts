@@ -1,12 +1,12 @@
 import { type RegisterDto, type LoginDto } from '../dtos/auth.dto';
 import { HttpException } from '../shareds/configs/http.exception';
 import bcrypt from 'bcryptjs';
-import { type Payload, ResponseData } from '../shareds/types/response.type';
+import { ResponseData, type Payload } from '../shareds/types/response.type';
 import { type SignOptions } from 'jsonwebtoken';
 import { JwtHelper } from '../shareds/helpers/jwt.helper';
 import { User } from '../entities/user.entity';
-import { Service } from 'typedi';
 import { getRepository, Repository } from 'typeorm';
+import { Service } from 'typedi';
 
 @Service()
 export class AuthService {
@@ -14,10 +14,6 @@ export class AuthService {
 
   constructor() {
     this.userRepository = getRepository(User);
-  }
-
-  test(): string {
-    return 'hello';
   }
 
   async register(userData: RegisterDto): Promise<ResponseData<User>> {
@@ -31,13 +27,12 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    const newUser = this.userRepository.create({
+    const newUser: Partial<User> = {
       email: userData.email,
-      password: hashedPassword,
+      passwordHash: hashedPassword,
       username: userData.username,
-      name: userData.name,
-      isVerified: true,
-    });
+      fullName: userData.name,
+    };
 
     const refreshPayload: Payload = {
       email: newUser.email,
@@ -46,21 +41,17 @@ export class AuthService {
     const refreshOptions: SignOptions = {
       expiresIn: '7d',
     };
-    newUser.refresh_token = JwtHelper.generateRefreshToken(
-      refreshPayload,
-      refreshOptions,
-    );
+    newUser.refreshToken = JwtHelper.generateRefreshToken(refreshPayload, refreshOptions);
 
     try {
-      const savedUser = await this.userRepository.save(newUser);
-
-      return new ResponseData(savedUser, 200, true, 'User created successfully');
+      const savedUser = await this.userRepository.save(newUser as User);
+      return new ResponseData(savedUser, 200, true, 'User registered successfully');
     } catch (error: any) {
       throw new HttpException(500, error.message);
     }
   }
 
-  async login(credentials: LoginDto): Promise<User | null> {
+  async login(credentials: LoginDto): Promise<ResponseData<{ accessToken: string }>> {
     const user = await this.userRepository.findOne({
       where: { email: credentials.email },
     });
@@ -69,7 +60,7 @@ export class AuthService {
       throw new HttpException(400, 'Invalid email or password');
     }
 
-    const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+    const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash);
     if (!isPasswordValid) {
       throw new HttpException(400, 'Invalid email or password');
     }
@@ -78,11 +69,30 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
+
     const refreshOptions: SignOptions = {
       expiresIn: '7d',
     };
+
     const refreshToken = JwtHelper.generateRefreshToken(refreshPayload, refreshOptions);
-    user.refresh_token = refreshToken;
-    return user;
+    user.refreshToken = refreshToken;
+
+    const accessTokenPayload: Payload = {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const accessTokenOptions: SignOptions = {
+      expiresIn: '1h',
+    };
+
+    const accessToken = JwtHelper.generateToken(accessTokenPayload, accessTokenOptions);
+    return new ResponseData<{ accessToken: string }>(
+      { accessToken },
+      200,
+      true,
+      'Login successful',
+    );
   }
 }
